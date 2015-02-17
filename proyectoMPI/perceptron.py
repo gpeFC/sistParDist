@@ -136,22 +136,43 @@ class CapaNeuronal:
 	#	pass
 
 	def obtener_delthas(self):
-		pass
+		"""
+		Regresa los valores de los errores cometidos por cada neurona de la
+		capa en la propagacion actual.
+		"""
 
-	def obtener_salidas(self):
-		pass
+	#def obtener_salidas(self):
+	#	pass
 
-	def obtener_pesos(self):
-		pass
+	#def obtener_pesos(self):
+	#	pass
 
 	def obtener_neuronas(self):
-		pass
+		"""
+		Regresa el vector de neuronas de la capa.
+		"""
 
 	def actualizar_biases(self):
-		pass
+		"""
+		Actualiza el bias de cada neurona de la capa.
+		"""
+		for i in range(len(self.__neuronas)):
+			bias_actual = self.__neuronas[i].obtener_bias()
+			bias_nuevo = bias_actual + (self.__neuronas[i].obtener_alpha() * self.__delthas[i])
+			self.__neuronas[i].establecer_bias(bias_nuevo)
 
-	def actualizar_pesos(self):
-		pass
+	def actualizar_pesos(self, entrada):
+		"""
+		entrada        Entrada presinaptica de cada neurona de la capa.
+
+		Actualiza los pesos sinapticos de cada neurona de la capa.
+		"""
+		for i in range(len(self.__neuronas)):
+			pesos_actuales = self.__neuronas[i].obtener_pesos()
+			pesos_nuevos = [0.0] * len(entrada)
+			for j in range(len(entrada)):
+				pesos_nuevos[j] = pesos_actuales[j] + (self.__neuronas[i].obtener_alpha() * self.__delthas[i] * entrada[j])
+			self.__neuronas[i].establecer_pesos(pesos_nuevos)
 
 	def calcular_delthas(self):
 		pass
