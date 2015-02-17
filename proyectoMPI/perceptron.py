@@ -5,6 +5,7 @@ con un algoritmo de retropropagacion.
 """
 
 import random
+import funciones
 
 class Neurona:
 	"""
@@ -174,11 +175,72 @@ class CapaNeuronal:
 				pesos_nuevos[j] = pesos_actuales[j] + (self.__neuronas[i].obtener_alpha() * self.__delthas[i] * entrada[j])
 			self.__neuronas[i].establecer_pesos(pesos_nuevos)
 
-	def calcular_delthas(self):
-		pass
+	def calcular_delthas_salida(self, id_funciones, errores, entrada):
+		"""
+		id_funciones        Vector de indices que indican la funcion de 
+		                    activacion asociada a la neurona.
 
-	def calcular_salidas(self):
-		pass
+		errores             Vector de errores obtenidos en las neuronas
+		                    de la capa de salida de la red.
+
+		entrada             Vector de valores presinapticos de entrada de
+		                    la capa.
+
+		Calcula los errores deltha cometidos por cada neurona de la capa
+		de salida de la red.
+		"""
+		for i in range(len(id_funciones)):
+			if id_funciones[i] == 1:
+				self.__delthas[i] = errores[i] * derivada_lineal(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos()))
+			elif id_funciones[i] == 2:
+				self.__delthas[i] = errores[i] * derivada_logistica(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos()))
+			elif id_funciones[i] == 3:
+				self.__delthas[i] = errores[i] * derivada_tangencial(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos()))
+			elif id_funciones[i] == 4:
+				self.__delthas[i] = errores[i] * derivada_hiperbolica(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos()))
+
+	def calcular_delthas_ocultas(self, id_funciones, delthas, entrada, neuronas):
+		"""
+		id_funciones        Vector de indices que indican la funcion de 
+		                    activacion asociada a la neurona.
+
+		delthas        Vector de errores deltha calculados en la capa 
+		               posterior.
+
+		entrada             Vector de valores presinapticos de entrada de
+		                    la capa.
+
+		neuronas       Vector de neuronas de la capa posterior.
+
+		Calcula los errores deltha cometidos por cada neurona de las capas
+		ocultas de la red.
+		"""
+		for i in range(len(self.__neuronas)):
+			suma_deltha = 0.0
+			for j in range(len(neuronas)):
+				pesos = neuronas[j].obtener_pesos()
+				suma_deltha += (delthas[j] * pesos[i])
+			if id_funciones[i] == 1:
+				self.__delthas[i] = derivada_lineal(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos())) * suma_deltha
+			elif id_funciones[i] == 2:
+				self.__delthas[i] = derivada_logistica(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos())) * suma_deltha
+			elif id_funciones[i] == 3:
+				self.__delthas[i] = derivada_tangencial(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos())) * suma_deltha
+			elif id_funciones[i] == 4:
+				self.__delthas[i] = derivada_hiperbolica(suma_ponderada(self.__neuronas[i].obtener_bias(), entrada, self.__neuronas[i].obtener_pesos())) * suma_deltha
+
+	def calcular_salidas(self, id_funciones, entrada):
+		"""
+		id_funciones        Vector de indices que indican la funcion de 
+		                    activacion asociada a la neurona.
+
+		entrada             Vector de valores presinapticos de entrada de
+		                    la capa.
+
+		Calcula las salidas postsinapticas de cada neurona de la capa.
+		"""
+		for i in range(len(id_funciones)):
+			self.__neuronas[i].calcular_salida(id_funciones[i], entrada)
 
 class RedNeuronal:
 	"""
