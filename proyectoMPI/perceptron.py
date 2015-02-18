@@ -257,26 +257,44 @@ class RedNeuronal:
 		self.__indice_funcion_activacion = []
 		self.__red_neuronal = []
 
-	def establecer_nombre_red(self):
-		pass
+	def establecer_nombre_red(self, nombre_red):
+		"""
+		"""
+		self.__nombre_red = nombre_red
 
-	def establecer_configuracion_alphas(self):
-		pass
+	def establecer_configuracion_alphas(self, config_alphas):
+		"""
+		"""
+		self.__configuracion_alphas = config_alphas
 
-	def establecer_configuracion_funciones(self):
-		pass
+	def establecer_configuracion_funciones(self, config_funciones):
+		"""
+		"""
+		self.__configuracion_funciones = config_funciones
 
-	def establecer_indice_funcion_activacion(self):
-		pass
+	def establecer_indice_funcion_activacion(self, indice_func_actv):
+		"""
+		"""
+		self.__indice_funcion_activacion = indice_func_actv
 
-	def establecer_red_neuronal(self):
-		pass
+	def establecer_red_neuronal(self, total_args, total_capas, total_neurs_capas):
+		"""
+		"""
+		for i in range(total_capas):
+			if i == 0:
+				self.__red_neuronal.append(CapaNeuronal(total_neurs_capas[i], total_args))
+			else:
+				self.__red_neuronal.append(CapaNeuronal(total_neurs_capas[i], total_neurs_capas[i-1]))
 
 	def obtener_nombre_red(self):
-		pass
+		"""
+		"""
+		return self.__nombre_red
 
 	def obtener_red_neuronal(self):
-		pass
+		"""
+		"""
+		return self.__red_neuronal
 
 	def aplicar_red_neuronal(self):
 		pass
