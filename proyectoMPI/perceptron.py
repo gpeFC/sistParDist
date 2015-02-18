@@ -116,22 +116,16 @@ class CapaNeuronal:
 
 		Inicializa los datos miembro de la capa.
 		"""
-		#self.__funciones = []
 		self.__delthas = [0.0] * total_neurs
-		#self.__salidas = []
-		#self.__entradas = []
 		self.__neuronas = []
 		for i in range(total_neurs):
 			self.__neuronas.append(Neurona(total_args))
 
-	#def establecer_funciones(self):
-	#	pass
-
-	#def establecer_entradas(self):
-	#	pass
-
-	def establecer_alphas(self):
-		pass
+	def establecer_alphas(self, alphas):
+		"""
+		"""
+		for i in range(len(alphas)):
+			self.__neuronas[i].establecer_alpha(alphas[i])
 
 	#def obtener_funciones(self):
 	#	pass
@@ -141,6 +135,7 @@ class CapaNeuronal:
 		Regresa los valores de los errores cometidos por cada neurona de la
 		capa en la propagacion actual.
 		"""
+		return self.__delthas
 
 	#def obtener_salidas(self):
 	#	pass
@@ -152,6 +147,7 @@ class CapaNeuronal:
 		"""
 		Regresa el vector de neuronas de la capa.
 		"""
+		return self.__neuronas
 
 	def actualizar_biases(self):
 		"""
@@ -285,6 +281,33 @@ class RedNeuronal:
 				self.__red_neuronal.append(CapaNeuronal(total_neurs_capas[i], total_args))
 			else:
 				self.__red_neuronal.append(CapaNeuronal(total_neurs_capas[i], total_neurs_capas[i-1]))
+
+	def establecer_valores_alphas(self, indice):
+		"""
+		"""
+		if indice == 1:
+			alpha = 0.0
+			while alpha == 0.0:
+				alpha = random.random()
+			for i in range(len(self.__red_neuronal)):
+				alphas = [alpha] * len(self.__red_neuronal[i].obtener_delthas())
+				self.__red_neuronal[i].establecer_alphas(alphas)
+		elif indice == 2:
+			for i in range(len(self.__red_neuronal)):
+				alpha = 0.0
+				while alpha == 0.0:
+					alpha = random.random()
+				alphas = [alpha] * len(self.__red_neuronal[i].obtener_delthas())
+				self.__red_neuronal[i].establecer_alphas(alphas)
+		elif indice == 3:
+			for i in range(len(self.__red_neuronal)):
+				alphas = [0.0] * len(self.__red_neuronal[i].obtener_delthas())
+				for j in range(len(alphas)):
+					alpha = 0.0
+					while alpha == 0.0:
+						alpha = random.random()
+					alphas[j] = alpha
+				self.__red_neuronal[i].establecer_alphas(alphas)
 
 	def obtener_nombre_red(self):
 		"""
