@@ -319,14 +319,78 @@ class RedNeuronal:
 		"""
 		return self.__red_neuronal
 
-	def aplicar_red_neuronal(self):
-		pass
+	def aplicar_red_neuronal(self, entrada):
+		"""
+		"""
+		salidas = []
+		for i in range(len(entrada)):
+			realizar_propagacion(entrada[i])
+			capa_salida = self.__red_neuronal[-1].obtener_neuronas()
+			salida = 0.0
+			for j in range(len(calcular_salida)):
+				salida += capa_salida[j].obtener_salida()
+			salida /= float(len(capa_salida))
+			salidas.append(salida)
+		return salidas
 
-	def realizar_propagacion(self):
-		pass
+	def realizar_propagacion(self, entrada):
+		"""
+		"""
+		for i in range(len(self.__red_neuronal)):
+			capa = self.__red_neuronal[i]
+			if i == 0:
+				capa.calcular_salidas(self.__indice_funcion_activacion[i], entrada)
+			else:
+				previa = self.__red_neuronal[i-1].obtener_neuronas()
+				entrada = []
+				for j in range(len(previa)):
+					entrada.append(previa[j].obtener_salida())
+				capa.calcular_salidas(self.__indice_funcion_activacion[i], entrada)
 
-	def realizar_retropropagacion(self):
-		pass
+	def realizar_retropropagacion(self, salida, entrada):
+		"""
+		"""
+		for i in range(len(self.__red_neuronal)):
+			indice = len(self.__red_neuronal) - (i+1)
+			actuales = self.__red_neuronal[indice].obtener_neuronas()
+			if indice == len(self.__red_neuronal) - 1:
+				previas = self.__red_neuronal[indice - 1].obtener_neuronas()
+				errores = []
+				for j in range(len(actuales)):
+					errores.append(salida - actuales[j].obtener_salida())
+				entrada = []
+				for j in range(len(previas)):
+					entrada.append(previas[j].obtener_salida())
+				self.__red_neuronal[indice].calcular_delthas_salida(
+					self.__indice_funcion_activacion[indice], errores,
+					entrada)
+			else:
+				posterior = self.__red_neuronal[indice + 1]
+				if indice == 0:
+					self.__red_neuronal[indice].calcular_delthas_ocultas(
+						self.__indice_funcion_activacion[indice],
+						posterior.obtener_delthas(), entrada,
+						actuales.obtener_neuronas())
+				else:
+					previas = self.__red_neuronal[indice - 1].obtener_neuronas()
+					entrada = []
+					for j in range(len(previas)):
+						entrada.append(previas[j].obtener_salida())
+					self.__red_neuronal[indice].calcular_delthas_ocultas(
+						self.__indice_funcion_activacion[indice],
+						posterior.obtener_delthas(), entrada,
+						actuales.obtener_neuronas())
 
-	def actualizar_parametros_neuronales(self):
-		pass
+	def actualizar_parametros_neuronales(self, entrada):
+		"""
+		"""
+		for i in range(len(self.__red_neuronal)):
+			self.__red_neuronal[i].actualizar_biases()
+			if i == 0:
+				self.__red_neuronal[i].actualizar_pesos(entrada)
+			else:
+				neuronas = self.__red_neuronal[i].obtener_neuronas()
+				entrada = []
+				for j in range(len(neuronas)):
+					entrada.append(neuronas[j].obtener_salida())
+				self.__red_neuronal[i].actualizar_pesos(entrada)
