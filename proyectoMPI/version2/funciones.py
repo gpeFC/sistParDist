@@ -4,6 +4,15 @@ necesarios para ponderar y ajustar los parametros variables de la red.
 """
 
 import math
+import random
+
+def pseudoaleatorio(inf, sup):
+	"""
+	"""
+	while True:
+		num_psa = random.uniform(inf, sup)
+		if num_psa != 0.0:
+			return num_psa
 
 def suma_ponderada(bias, entrada, pesos):
 	"""
