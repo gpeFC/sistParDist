@@ -124,12 +124,12 @@ class CapaNeuronal:
 		                    activacion asociada a la neurona.
 
 		delthas        Vector de errores deltha calculados en la capa 
-		               posterior.
+		               capa_siguiente.
 
 		entrada             Vector de valores presinapticos de entrada de
 		                    la capa.
 
-		neuronas       Vector de neuronas de la capa posterior.
+		neuronas       Vector de neuronas de la capa capa_siguiente.
 
 		Calcula los errores deltha cometidos por cada neurona de las capas
 		ocultas de la red.
@@ -208,12 +208,12 @@ class RedNeuronal:
 		"""
 		salidas = []
 		for i in range(len(entrada)):
-			realizar_propagacion(entrada[i])
-			capa_salida = self.red_neuronal[-1].obtener_neuronas()
+			self.realizar_propagacion(entrada[i])
+			neuronas_salida = self.red_neuronal[-1].neuronas
 			salida = 0.0
-			for j in range(len(calcular_salida)):
-				salida += capa_salida[j].obtener_salida()
-			salida /= float(len(capa_salida))
+			for j in range(len(neuronas_salida)):
+				salida += neuronas_salida[j].salida
+			salida /= float(len(neuronas_salida))
 			salidas.append(salida)
 		return salidas
 
@@ -225,10 +225,10 @@ class RedNeuronal:
 			if i == 0:
 				capa.calcular_salidas(self.indice_funcion_activacion[i], entrada)
 			else:
-				previa = self.red_neuronal[i-1].obtener_neuronas()
+				neuronas = self.red_neuronal[i-1].neuronas
 				entrada = []
-				for j in range(len(previa)):
-					entrada.append(previa[j].obtener_salida())
+				for j in range(len(neuronas)):
+					entrada.append(neuronas[j].salida)
 				capa.calcular_salidas(self.indice_funcion_activacion[i], entrada)
 
 	def realizar_retropropagacion(self, salida, entrada):
@@ -236,34 +236,34 @@ class RedNeuronal:
 		"""
 		for i in range(len(self.red_neuronal)):
 			indice = len(self.red_neuronal) - (i+1)
-			actuales = self.red_neuronal[indice].obtener_neuronas()
+			neuronas_actuales = self.red_neuronal[indice].neuronas
 			if indice == len(self.red_neuronal) - 1:
-				previas = self.red_neuronal[indice - 1].obtener_neuronas()
+				neuronas_previas = self.red_neuronal[indice - 1].neuronas
 				errores = []
-				for j in range(len(actuales)):
-					errores.append(salida - actuales[j].obtener_salida())
+				for j in range(len(neuronas_actuales)):
+					errores.append(salida - neuronas_actuales[j].salida)
 				entrada = []
-				for j in range(len(previas)):
-					entrada.append(previas[j].obtener_salida())
+				for j in range(len(neuronas_previas)):
+					entrada.append(neuronas_previas[j].salida)
 				self.red_neuronal[indice].calcular_delthas_salida(
 					self.indice_funcion_activacion[indice], errores,
 					entrada)
 			else:
-				posterior = self.red_neuronal[indice + 1]
+				capa_siguiente = self.red_neuronal[indice + 1]
 				if indice == 0:
 					self.red_neuronal[indice].calcular_delthas_ocultas(
 						self.indice_funcion_activacion[indice],
-						posterior.obtener_delthas(), entrada,
-						actuales.obtener_neuronas())
+						capa_siguiente.delthas, entrada,
+						neuronas_actuales.neuronas)
 				else:
-					previas = self.red_neuronal[indice - 1].obtener_neuronas()
+					neuronas_previas = self.red_neuronal[indice - 1].neuronas
 					entrada = []
-					for j in range(len(previas)):
-						entrada.append(previas[j].obtener_salida())
+					for j in range(len(neuronas_previas)):
+						entrada.append(neuronas_previas[j].salida)
 					self.red_neuronal[indice].calcular_delthas_ocultas(
 						self.indice_funcion_activacion[indice],
-						posterior.obtener_delthas(), entrada,
-						actuales.obtener_neuronas())
+						capa_siguiente.delthas, entrada,
+						neuronas_actuales.neuronas)
 
 	def actualizar_parametros_neuronales(self, entrada):
 		"""
@@ -273,8 +273,8 @@ class RedNeuronal:
 			if i == 0:
 				self.red_neuronal[i].actualizar_pesos(entrada)
 			else:
-				neuronas = self.red_neuronal[i].obtener_neuronas()
+				neuronas = self.red_neuronal[i].neuronas
 				entrada = []
 				for j in range(len(neuronas)):
-					entrada.append(neuronas[j].obtener_salida())
+					entrada.append(neuronas[j].salida)
 				self.red_neuronal[i].actualizar_pesos(entrada)
