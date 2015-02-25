@@ -208,10 +208,9 @@ class RedNeuronal:
 		for i in range(len(entrada)):
 			self.realizar_propagacion(entrada[i])
 			neuronas_salida = self.red_neuronal[-1].neuronas
-			salida = 0.0
+			salida = []
 			for j in range(len(neuronas_salida)):
-				salida += neuronas_salida[j].salida
-			salida /= float(len(neuronas_salida))
+				salida.append(neuronas_salida[j].salida)
 			salidas.append(salida)
 		return salidas
 
@@ -229,7 +228,7 @@ class RedNeuronal:
 					entrada.append(neuronas[j].salida)
 				capa.calcular_salidas(self.indice_funcion_activacion[i], entrada)
 
-	def realizar_retropropagacion(self, salida, entrada):
+	def realizar_retropropagacion(self, salidas, entrada):
 		"""
 		"""
 		for i in range(len(self.red_neuronal)):
@@ -239,7 +238,7 @@ class RedNeuronal:
 				neuronas_previas = self.red_neuronal[indice - 1].neuronas
 				errores = []
 				for j in range(len(neuronas_actuales)):
-					errores.append(salida - neuronas_actuales[j].salida)
+					errores.append(salidas[j] - neuronas_actuales[j].salida)
 				entrada = []
 				for j in range(len(neuronas_previas)):
 					entrada.append(neuronas_previas[j].salida)

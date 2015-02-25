@@ -7,5 +7,8 @@ perceptron multicapa.
 from perceptron import *
 
 
-def algoritmo_retropropagacion():
-	pass
+def algoritmo_retropropagacion(epocas, error, patrones, red):
+	"""
+	"""
+	while epocas > 0:
+		pass
