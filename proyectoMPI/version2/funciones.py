@@ -8,6 +8,11 @@ import random
 
 def pseudoaleatorio(inf, sup):
 	"""
+	inf        Limite inferior del rango.
+
+	sup        Limite superior del rango.
+
+	Regresa un numero real pseudoaleatorio de un rango determinado.
 	"""
 	while True:
 		num_psa = random.uniform(inf, sup)

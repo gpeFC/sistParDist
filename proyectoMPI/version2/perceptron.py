@@ -5,8 +5,7 @@ con un algoritmo de retropropagacion.
 """
 
 
-import random
-import funciones
+from funciones import *
 
 
 class Neurona:
@@ -23,10 +22,10 @@ class Neurona:
 		"""
 		self.alpha = 0.0
 		self.salida = 0.0
-		self.bias = funciones.pseudoaleatorio(-1.0, 1.0)
+		self.bias = pseudoaleatorio(-1.0, 1.0)
 		self.pesos = []
 		for i in range(total_args):
-			self.pesos.append(funciones.pseudoaleatorio(-1.0, 1.0))
+			self.pesos.append(pseudoaleatorio(-1.0, 1.0))
 
 	def calcular_salida(self, id_funcion, entrada):
 		"""
@@ -173,7 +172,6 @@ class RedNeuronal:
 		self.nombre_red = nombre
 		self.configuracion_alphas = config_alphas
 		self.configuracion_funciones = config_funcns
-		#self.total_neuronas_capa = []
 		self.indice_funcion_activacion = indices_funcns
 		self.red_neuronal = []
 		for i in range(len(self.indice_funcion_activacion)):
@@ -187,20 +185,20 @@ class RedNeuronal:
 		"""
 		"""
 		if indice == 1:
-			alpha = funciones.pseudoaleatorio(-1.0, 1.0)
+			alpha = pseudoaleatorio(-1.0, 1.0)
 			for i in range(len(self.red_neuronal)):
 				alphas = [alpha] * len(self.indice_funcion_activacion[i])
 				self.red_neuronal[i].establecer_alphas(alphas)
 		elif indice == 2:
 			for i in range(len(self.red_neuronal)):
-				alpha = funciones.pseudoaleatorio(-1.0, 1.0)
+				alpha = pseudoaleatorio(-1.0, 1.0)
 				alphas = [alpha] * len(self.indice_funcion_activacion[i])
 				self.red_neuronal[i].establecer_alphas(alphas)
 		elif indice == 3:
 			for i in range(len(self.red_neuronal)):
 				alphas = []
 				for j in range(len(self.indice_funcion_activacion[i])):
-					alphas.append(funciones.pseudoaleatorio(-1.0, 1.0))
+					alphas.append(pseudoaleatorio(-1.0, 1.0))
 				self.red_neuronal[i].establecer_alphas(alphas)
 
 	def aplicar_red_neuronal(self, entrada):
