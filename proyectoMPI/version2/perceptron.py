@@ -117,18 +117,15 @@ class CapaNeuronal:
 			elif id_funciones[i] == 4:
 				self.delthas[i] = errores[i] * derivada_hiperbolica(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
 
-	def calcular_delthas_ocultas(self, id_funciones, delthas, entrada, neuronas):
+	def calcular_delthas_ocultas(self, id_funciones, entrada, capa_sig):
 		"""
 		id_funciones        Vector de indices que indican la funcion de 
 		                    activacion asociada a la neurona.
 
-		delthas        Vector de errores deltha calculados en la capa 
-		               capa_siguiente.
-
 		entrada             Vector de valores presinapticos de entrada de
 		                    la capa.
 
-		neuronas       Vector de neuronas de la capa capa_siguiente.
+		capa_sig            Capa neuronal siguiente a la actual.
 
 		Calcula los errores deltha cometidos por cada neurona de las capas
 		ocultas de la red.
@@ -136,11 +133,12 @@ class CapaNeuronal:
 		for i in range(len(self.neuronas)):
 			suma_deltha = 0.0
 			print "i actual:", i
-			for j in range(len(neuronas)):
+			for j in range(len(capa_sig.neuronas)):
 				print "j actual:", j
-				pesos = neuronas[j].pesos
+				pesos = capa_sig.neuronas[j].pesos
 				print "pesos:", pesos
-				suma_deltha += (delthas[j] * pesos[i])
+				print "long-delt(%d) long-pes(%d)" % (len(capa_sig.delthas),len(pesos))
+				suma_deltha += (capa_sig.delthas[j] * pesos[i])
 			if id_funciones[i] == 1:
 				self.delthas[i] = derivada_lineal(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos)) * suma_deltha
 			elif id_funciones[i] == 2:
@@ -236,6 +234,7 @@ class RedNeuronal:
 			indice = len(self.capas) - (i+1)
 			neuronas_actuales = self.capas[indice].neuronas
 			if indice == len(self.capas) - 1:
+				print "Capa-Salida"
 				neuronas_previas = self.capas[indice - 1].neuronas
 				errores = []
 				for j in range(len(neuronas_actuales)):
@@ -249,29 +248,29 @@ class RedNeuronal:
 			else:
 				capa_siguiente = self.capas[indice + 1]
 				if indice == 0:
+					print "Capa-Uno"
 					self.capas[indice].calcular_delthas_ocultas(
-						self.indice_funcion_activacion[indice],
-						capa_siguiente.delthas, entrada,
-						capa_siguiente.neuronas)
+						self.indice_funcion_activacion[indice], entrada,
+						capa_siguiente)
 				else:
 					neuronas_previas = self.capas[indice - 1].neuronas
 					entrada = []
 					for j in range(len(neuronas_previas)):
 						entrada.append(neuronas_previas[j].salida)
 					self.capas[indice].calcular_delthas_ocultas(
-						self.indice_funcion_activacion[indice],
-						capa_siguiente.delthas, entrada,
-						capa_siguiente.neuronas)
+						self.indice_funcion_activacion[indice], entrada,
+						capa_siguiente)
 
 	def actualizar_parametros_neuronales(self, entrada):
 		"""
 		"""
+		print "\nActualizo-Paramt\n"
 		for i in range(len(self.capas)):
 			self.capas[i].actualizar_biases()
 			if i == 0:
 				self.capas[i].actualizar_pesos(entrada)
 			else:
-				neuronas = self.capas[i].neuronas
+				neuronas = self.capas[i-1].neuronas
 				entrada = []
 				for j in range(len(neuronas)):
 					entrada.append(neuronas[j].salida)

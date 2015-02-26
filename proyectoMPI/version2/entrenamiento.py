@@ -10,19 +10,23 @@ from perceptron import *
 def algoritmo_retropropagacion(epocas, error, patrones, red_neural):
 	"""
 	"""
+	print "Error-", error
 	iteracion = 0
 	error_final = 0.0
 	indices = range(len(patrones))
 	while iteracion < epocas:
-		print "Entrenamiento en epoca: ", iteracion
+		print "Entrenamiento en epoca: ", iteracion+1
 		error_global = 0.0
 		shuffle(indices)
+		print "orden-", indices
 		for i in indices:
+			print "Pat-", i
 			error_local = 0.0
 			entrada_patron = []
 			for j in range(len(patrones[i])):
 				if type(patrones[i][j]) != list:
 					entrada_patron.append(patrones[i][j])
+			print "Propg-", iteracion+1
 			red_neural.realizar_propagacion(entrada_patron)
 			neuronas_salida = red_neural.capas[-1].neuronas
 			for j in range(len(patrones[i][-1])):
@@ -30,6 +34,7 @@ def algoritmo_retropropagacion(epocas, error, patrones, red_neural):
 			error_local /= float(len(neuronas_salida))
 			error_global += error_local
 			if error_local != 0.0:
+				print "Retro-", iteracion+1
 				red_neural.realizar_retropropagacion(patrones[i][-1], entrada_patron)
 			red_neural.actualizar_parametros_neuronales(entrada_patron)
 		error_global /= float(len(patrones))
@@ -39,7 +44,7 @@ def algoritmo_retropropagacion(epocas, error, patrones, red_neural):
 			break
 
 	print "+"*30
-	print "Epocas de entrenamiento:     ", interacion
+	print "Epocas de entrenamiento:     ", iteracion
 	print "Error minimo acordado:       ", error 
 	print "Error minimo alcanzado:      ", error_final
 	print "+"*30
