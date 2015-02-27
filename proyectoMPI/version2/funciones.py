@@ -52,7 +52,7 @@ def sigmoide_logistico(potencial):
 	Regresa el valor de activacion postsinaptico de la neurona mediante la
 	funcion de transferencia sigmoide logistico.
 	"""
-	return (1.0 / (1.0 + (pow(math.e, -1.0 * potencial))))
+	return (1.0 / (1.0 + (pow(math.e, (-1.0 * potencial)))))
 
 def sigmoide_tangencial(potencial):
 	"""
@@ -61,7 +61,7 @@ def sigmoide_tangencial(potencial):
 	Regresa el valor de activacion postsinaptico de la neurona mediante la
 	funcion de transferencia sigmoide tangencial.
 	"""
-	return ((2.0 / (1.0 + pow(math.e, -1.0 * pow))) - 1.0)
+	return ((2.0 / (1.0 + pow(math.e, (-1.0 * potencial)))) - 1.0)
 
 def sigmoide_hiperbolico(potencial):
 	"""
@@ -70,7 +70,7 @@ def sigmoide_hiperbolico(potencial):
 	Regresa el valor de activacion postsinaptico de la neurona mediante la
 	funcion de transferencia sigmoide hiperbolico.
 	"""
-	return ((pow(math.e, potencial) - (pow(math.e, -1.0 * potencial))) / (pow(math.e, potencial) + (pow(math.e, -1.0 * potencial))))
+	return ((pow(math.e, potencial) - (pow(math.e, (-1.0 * potencial)))) / (pow(math.e, potencial) + (pow(math.e, (-1.0 * potencial)))))
 
 def derivada_lineal(potencial):
 	"""
@@ -97,7 +97,7 @@ def derivada_tangencial(potencial):
 	Regresa el valor de la derivada del valor de activacion postsinaptico de
 	la neurona para la funcion de transferencia sigmoide tangencial.
 	"""
-	return ((2.0 * pow(math.e, -1 * potencial)) / pow(1.0 + pow(math.e, -1 * pow), 2.0))
+	return ((2.0 * pow(math.e, (-1 * potencial))) / pow(1.0 + pow(math.e, (-1 * potencial)), 2.0))
 
 def derivada_hiperbolica(potencial):
 	"""

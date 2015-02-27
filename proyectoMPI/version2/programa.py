@@ -39,11 +39,11 @@ error = 0.0
 for i in range(len(patrones)):
 	error += patrones[i][1][0]
 error /= float(len(patrones))
-error *= (15.0/100.0)
+error *= (35.0/100.0)
 error = abs(error)
 
 
-epocas = 50
+epocas = 5
 
 indices = [[2,2],[1]]
 
@@ -58,8 +58,13 @@ red.establecer_valores_alphas(1)
 imprime_red(red)
 print 
 
-algoritmo_retropropagacion(epocas,error,patrones,red)
+backpropagation(epocas,error,patrones,red)
 
 print 
 imprime_red(red)
 print 
+
+print
+for i in range(len(red.capas)):
+	print red.capas[i].delthas
+print
