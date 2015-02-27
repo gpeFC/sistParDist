@@ -1,8 +1,23 @@
 """
 """
 
+import math
 from perceptron import *
 from entrenamiento import *
+
+
+def imprime_red(red):
+	print "="*60
+	for i in range(len(red.capas)):
+		print "Capa " + str(i+1) + "-"*35
+		for j in range(len(red.capas[i].neuronas)):
+			print "Neurona " + str(j+1)
+			print "\tBias:", red.capas[i].neuronas[j].bias
+			print "\tAlpha:", red.capas[i].neuronas[j].alpha
+			print "\tPesos:", red.capas[i].neuronas[j].pesos
+	print "="*60
+
+
 
 patrones = [
 			[-2.0,[-1.0]],
@@ -25,42 +40,26 @@ for i in range(len(patrones)):
 	error += patrones[i][1][0]
 error /= float(len(patrones))
 error *= (15.0/100.0)
-if error < 0.0:
-	error *= -1.0
+error = abs(error)
 
-print "\nError: %f\n" % error
+
+epocas = 50
+
+indices = [[2,2],[1]]
 
 print
 print "Ejemplo: Red Neuronal Perceptron Multicapa"
+print 
 
-red = RedNeuronal(1,"RED1","TDA/RED","FNCN/SALIDAOCULTAS",[[2,2],[1]])
+red = RedNeuronal(1,"RED1","TDA/RED","FNCN/SALIDAOCULTAS",indices)
 
 red.establecer_valores_alphas(1)
 
+imprime_red(red)
 print 
-print "+"*57
-for i in range(len(red.capas)):
-	print "Capa[" + str(i+1) + "]" + "="*50
-	for j in range(len(red.capas[i].neuronas)):
-		print "Neurona(" + str(j+1) + ")" + "-"*47
-		print "Bias: ", red.capas[i].neuronas[j].bias
-		print "Alpha: ", red.capas[i].neuronas[j].alpha
-		print "Pesos: ", red.capas[i].neuronas[j].pesos
-print "+"*57
-print
 
-print
-algoritmo_retropropagacion(5,error,patrones,red)
-print
+algoritmo_retropropagacion(epocas,error,patrones,red)
 
 print 
-print "+"*57
-for i in range(len(red.capas)):
-	print "Capa[" + str(i+1) + "]" + "="*50
-	for j in range(len(red.capas[i].neuronas)):
-		print "Neurona(" + str(j+1) + ")" + "-"*47
-		print "Bias: ", red.capas[i].neuronas[j].bias
-		print "Alpha: ", red.capas[i].neuronas[j].alpha
-		print "Pesos: ", red.capas[i].neuronas[j].pesos
-print "+"*57
-print
+imprime_red(red)
+print 

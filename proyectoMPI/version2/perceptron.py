@@ -76,9 +76,7 @@ class CapaNeuronal:
 		Actualiza el bias de cada neurona de la capa.
 		"""
 		for i in range(len(self.neuronas)):
-			bias_actual = self.neuronas[i].bias
-			bias_nuevo = bias_actual + (self.neuronas[i].alpha * self.delthas[i])
-			self.neuronas[i].bias = bias_nuevo
+			self.neuronas[i].bias += (self.neuronas[i].alpha * self.delthas[i])
 
 	def actualizar_pesos(self, entrada):
 		"""
@@ -87,11 +85,8 @@ class CapaNeuronal:
 		Actualiza los pesos sinapticos de cada neurona de la capa.
 		"""
 		for i in range(len(self.neuronas)):
-			pesos_actuales = self.neuronas[i].pesos
-			pesos_nuevos = [0.0] * len(entrada)
 			for j in range(len(entrada)):
-				pesos_nuevos[j] = pesos_actuales[j] + (self.neuronas[i].alpha * self.delthas[i] * entrada[j])
-			self.neuronas[i].pesos = pesos_nuevos
+				self.neuronas[i].pesos[j] -= (self.neuronas[i].alpha * self.delthas[i] * entrada[j])
 
 	def calcular_delthas_salida(self, id_funciones, errores, entrada):
 		"""
@@ -107,7 +102,7 @@ class CapaNeuronal:
 		Calcula los errores deltha cometidos por cada neurona de la capa
 		de salida de la red.
 		"""
-		for i in range(len(id_funciones)):
+		for i in range(len(errores)):
 			if id_funciones[i] == 1:
 				self.delthas[i] = errores[i] * derivada_lineal(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
 			elif id_funciones[i] == 2:
@@ -186,19 +181,19 @@ class RedNeuronal:
 		"""
 		"""
 		if indice == 1:
-			alpha = pseudoaleatorio(-1.0, 1.0)
+			alpha = pseudoaleatorio(0.0, 1.0)
 			for i in range(len(self.capas)):
 				for j in range(len(self.capas[i].neuronas)):
 					self.capas[i].neuronas[j].alpha = alpha
 		elif indice == 2:
 			for i in range(len(self.capas)):
-				alpha = pseudoaleatorio(-1.0, 1.0)
+				alpha = pseudoaleatorio(0.0, 1.0)
 				for j in range(len(self.capas[i].neuronas)):
 					self.capas[i].neuronas[j].alpha = alpha
 		elif indice == 3:
 			for i in range(len(self.capas)):
 				for j in range(len(self.capas[i].neuronas)):
-					self.capas[i].neuronas[j].alpha = pseudoaleatorio(-1.0, 1.0)
+					self.capas[i].neuronas[j].alpha = pseudoaleatorio(0.0, 1.0)
 
 	def aplicar_red_neuronal(self, entrada):
 		"""
