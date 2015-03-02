@@ -4,7 +4,7 @@ import random
 def pseudoaleatorio(inf, sup):
 	while True:
 		num_psa = random.uniform(inf, sup)
-		if num_psa != 0.0:
+		if num_psa != inf and num_psa != sup and num_psa != 0.0:
 			return num_psa
 
 def suma_ponderada(bias, entrada, pesos):

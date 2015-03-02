@@ -4,10 +4,10 @@ class Neurona:
 	def __init__(self, total_args):
 		self.alpha = 0.0
 		self.salida = 0.0
-		self.bias = pseudoaleatorio(-0.9, 0.9)
+		self.bias = pseudoaleatorio(-1.0, 1.0)
 		self.pesos = []
 		for i in range(total_args):
-			self.pesos.append(pseudoaleatorio(-0.9, 0.9))
+			self.pesos.append(pseudoaleatorio(-1.0, 1.0))
 
 	def calcular_salida(self, id_funcion, entrada):
 		if id_funcion == 1:
@@ -82,19 +82,19 @@ class RedNeuronal:
 
 	def establecer_valores_alphas(self, indice):
 		if indice == 1:
-			alpha = pseudoaleatorio(0.0, 0.9)
+			alpha = pseudoaleatorio(0.0, 1.0)
 			for i in range(len(self.capas)):
 				for j in range(len(self.capas[i].neuronas)):
 					self.capas[i].neuronas[j].alpha = alpha
 		elif indice == 2:
 			for i in range(len(self.capas)):
-				alpha = pseudoaleatorio(0.0, 0.9)
+				alpha = pseudoaleatorio(0.0, 1.0)
 				for j in range(len(self.capas[i].neuronas)):
 					self.capas[i].neuronas[j].alpha = alpha
 		elif indice == 3:
 			for i in range(len(self.capas)):
 				for j in range(len(self.capas[i].neuronas)):
-					self.capas[i].neuronas[j].alpha = pseudoaleatorio(0.0, 0.9)
+					self.capas[i].neuronas[j].alpha = pseudoaleatorio(0.0, 1.0)
 
 	def aplicar_red_neuronal(self, entrada):
 		salidas = []
