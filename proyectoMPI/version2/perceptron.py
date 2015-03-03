@@ -67,7 +67,7 @@ class CapaNeuronal:
 
 
 class RedNeuronal:
-	def __init__(self, total_args, nombre, config_alphas, config_funcns, indices_funcns):
+	def __init__(self, total_args, indices_funcns, nombre, config_alphas, config_funcns):
 		self.nombre_red = nombre
 		self.configuracion_alphas = config_alphas
 		self.configuracion_funciones = config_funcns
@@ -100,10 +100,9 @@ class RedNeuronal:
 		salidas = []
 		for i in range(len(entrada)):
 			self.realizar_propagacion(entrada[i])
-			neuronas_salida = self.capas[-1].neuronas
 			salida = []
-			for j in range(len(neuronas_salida)):
-				salida.append(neuronas_salida[j].salida)
+			for j in range(len(self.capas[-1].neuronas)):
+				salida.append(self.capas[-1].neuronas[j].salida)
 			salidas.append(salida)
 		return salidas
 
@@ -112,24 +111,21 @@ class RedNeuronal:
 			if i == 0:
 				self.capas[i].calcular_salidas(self.indice_funcion_activacion[i], entrada)
 			else:
-				neuronas = self.capas[i-1].neuronas
 				entrada = []
-				for j in range(len(neuronas)):
-					entrada.append(neuronas[j].salida)
+				for j in range(len(self.capas[i-1].neuronas)):
+					entrada.append(self.capas[i-1].neuronas[j].salida)
 				self.capas[i].calcular_salidas(self.indice_funcion_activacion[i], entrada)
 
 	def realizar_retropropagacion(self, salidas, entrada):
 		for i in range(len(self.capas)):
 			indice = len(self.capas) - (i+1)
-			neuronas_actuales = self.capas[indice].neuronas
 			if indice == len(self.capas) - 1:
-				neuronas_previas = self.capas[indice - 1].neuronas
 				errores = []
-				for j in range(len(neuronas_actuales)):
-					errores.append(salidas[j] - neuronas_actuales[j].salida)
+				for j in range(len(self.capas[indice].neuronas)):
+					errores.append(salidas[j] - self.capas[indice].neuronas[j].salida)
 				entrada = []
-				for j in range(len(neuronas_previas)):
-					entrada.append(neuronas_previas[j].salida)
+				for j in range(len(self.capas[indice - 1].neuronas)):
+					entrada.append(self.capas[indice - 1].neuronas[j].salida)
 				self.capas[indice].calcular_delthas_salida(
 					self.indice_funcion_activacion[indice], errores,
 					entrada)
@@ -140,10 +136,9 @@ class RedNeuronal:
 						self.indice_funcion_activacion[indice], entrada,
 						capa_siguiente)
 				else:
-					neuronas_previas = self.capas[indice - 1].neuronas
 					entrada = []
-					for j in range(len(neuronas_previas)):
-						entrada.append(neuronas_previas[j].salida)
+					for j in range(len(self.capas[indice - 1].neuronas)):
+						entrada.append(self.capas[indice - 1].neuronas[j].salida)
 					self.capas[indice].calcular_delthas_ocultas(
 						self.indice_funcion_activacion[indice], entrada,
 						capa_siguiente)

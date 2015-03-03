@@ -52,7 +52,7 @@ print
 print "Ejemplo: Red Neuronal Perceptron Multicapa"
 print 
 
-red = RedNeuronal(1,"RED1","TDA/RED","FNCN/SALIDAOCULTAS",indices)
+red = RedNeuronal(1,indices,"RED1","TDA/RED","FNCN/SALIDAOCULTAS")
 
 red.establecer_valores_alphas(1)
 

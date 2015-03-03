@@ -28,14 +28,18 @@ entrada = [-2.0]
 
 potencial = suma_ponderada(bias,entrada,pesos)
 
-activacion = sigmoide_tangencial(potencial)
+activacion_sl = sigmoide_logistico(potencial)
+activacion_st = sigmoide_tangencial(potencial)
+activacion_sh = sigmoide_hiperbolico(potencial)
 
 print "\tDatos\n"
 print "Bias:", bias
 print "Entrada:", entrada
 print "Pesos:", pesos
 print "Potencial:", potencial
-print "Activacion:", activacion
+print "Activacion(SL):", activacion_sl
+print "Activacion(ST):", activacion_st
+print "Activacion(SH):", activacion_sh
 print 
 
 
