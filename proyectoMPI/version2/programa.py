@@ -42,10 +42,11 @@ error /= float(len(patrones))
 error *= (35.0/100.0)
 error = abs(error)
 
+error = 0.0005
 
 epocas = 30
 
-indices = [[2,2],[1]]
+indices = [[3,3],[1]]
 
 print
 print "Ejemplo: Red Neuronal Perceptron Multicapa"
@@ -64,7 +65,9 @@ print
 imprime_red(red)
 print 
 
+"""
 print
 for i in range(len(red.capas)):
 	print red.capas[i].delthas
 print
+"""
