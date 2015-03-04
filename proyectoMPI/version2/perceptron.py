@@ -63,6 +63,7 @@ class CapaNeuronal:
 
 	def calcular_salidas(self, id_funciones, entrada):
 		for i in range(len(id_funciones)):
+			#print "Pesos: ", self.neuronas[i].pesos
 			self.neuronas[i].calcular_salida(id_funciones[i], entrada)
 
 

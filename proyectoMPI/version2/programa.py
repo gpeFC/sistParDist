@@ -44,7 +44,7 @@ error = abs(error)
 
 error = 0.0005
 
-epocas = 30
+epocas = 5
 
 indices = [[3,3],[1]]
 
