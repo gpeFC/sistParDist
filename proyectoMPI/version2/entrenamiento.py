@@ -7,6 +7,17 @@ import math
 from random import shuffle
 from perceptron import *
 
+def imprime_red(red):
+	print "="*60
+	for i in range(len(red.capas)):
+		print "Capa " + str(i+1) + "-"*35
+		for j in range(len(red.capas[i].neuronas)):
+			print "Neurona " + str(j+1)
+			print "\tBias:", red.capas[i].neuronas[j].bias
+			print "\tAlpha:", red.capas[i].neuronas[j].alpha
+			print "\tPesos:", red.capas[i].neuronas[j].pesos
+	print "="*60
+
 def backpropagation(epocas, error, patrones, red):
 	entradas = []
 	salidas = []
@@ -45,16 +56,10 @@ def backpropagation(epocas, error, patrones, red):
 		iteracion += 1
 		if error_global <= error:
 			break
+		
 		entrar = raw_input("<Enter>")
-		"""
-		print "Epoca:", iteracion
-		for i in range(len(red.capas)):
-			for j in range(len(red.capas[i].neuronas)):
-				print "\tBias:", red.capas[i].neuronas[j].bias
-				print "\tAlpha:", red.capas[i].neuronas[j].alpha
-				print "\tPesos:", red.capas[i].neuronas[j].pesos
-			print
-		"""
+		imprime_red(red)
+		entrar = raw_input("<Enter>")
 
 	print "+"*30
 	print "Epocas de entrenamiento:     ", iteracion
