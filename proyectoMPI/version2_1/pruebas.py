@@ -23,7 +23,7 @@ print
 
 lista = range(len(pts_ent))
 
-for i in range(10):
+for i in range(10000):
 	print "Epoca:", i+1
 	errores = 0
 	shuffle(lista)
