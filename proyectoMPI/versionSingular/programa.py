@@ -78,9 +78,9 @@ ejemplos = [
 
 error = 0.005
 
-epocas = 50000
+epocas = 150000
 
-indices = [[3,3],[2,2],[1]]
+indices = [[2,2],[1]]
 
 
 print

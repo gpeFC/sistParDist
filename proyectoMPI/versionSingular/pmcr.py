@@ -2,12 +2,26 @@ import math
 import random
 
 def pseudoaleatorio(inferior, superior):
+	"""
+	Regresa un numero real pseudoaleatorio de un rango definido, el numero
+	es distinto de las cotas del rango.
+
+	inferior     Cota inferior del rango.
+	superior     Cota superior del rango.
+	"""
 	while True:
 		numero = random.uniform(inferior, superior)
 		if numero != inferior and numero != superior:
 			return numero
 
 def suma_ponderada(bias, entrada, pesos):
+	"""
+	(Regla de propagacion) Regresa el potencial sinaptico de una neurona.
+
+	bias        Bias/umbral sinaptico de la neurona.
+	entrada     Valores presinapticos de la neurona.
+	pesos       Pesos sinapticos de la neurona.
+	"""
 	potencial = 0.0
 	for i in range(len(pesos)):
 		potencial += (pesos[i] * entrada[i])
@@ -15,6 +29,12 @@ def suma_ponderada(bias, entrada, pesos):
 	return potencial
 
 def activacion(id_funcion, potencial):
+	"""
+	Regresa la activacion postsinaptica de la neurona.
+
+	id_funcion     Indice que indica la funcion de activacion de la neurona.
+	potencial      Potencial sinaptico de la neurona.
+	"""
 	if id_funcion == 1:
 		return potencial
 	elif id_funcion == 2:
