@@ -38,13 +38,24 @@ class CapaNeuronal(object):
 			self.neuronas.append(Neurona(total_args))
 
 	def ajustar_biases(self):
-		pass
+		for i in range(len(self.neuronas)):
+			self.neuronas[i].bias += (self.neuronas[i].alpha * self.delthas[i])
 
 	def ajustar_pesos(self):
-		pass
+		for i in range(len(self.neuronas)):
+			for j in range(len(self.entradas)):
+				self.neuronas[i].pesos[j] -= (self.neuronas[i].alpha * self.delthas[i] * self.entradas[j])
 
-	def calcular_delthas_salida(self):
-		pass
+	def calcular_delthas_salida(self, errores):
+		for i in range(len(errores)):
+			if id_funciones[i] == 1:
+				self.delthas[i] = errores[i] * derivada_lineal(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
+			elif id_funciones[i] == 2:
+				self.delthas[i] = errores[i] * derivada_logistica(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
+			elif id_funciones[i] == 3:
+				self.delthas[i] = errores[i] * derivada_tangencial(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
+			elif id_funciones[i] == 4:
+				self.delthas[i] = errores[i] * derivada_hiperbolica(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
 
 	def calcular_delthas_ocultas(self):
 		pass

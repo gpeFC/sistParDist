@@ -1,6 +1,17 @@
 import math
 import random
 
+def imprime_red(red):
+	print "="*60
+	for i in range(len(red.capas)):
+		print "Capa " + str(i+1) + "-"*35
+		for j in range(len(red.capas[i].neuronas)):
+			print "Neurona " + str(j+1)
+			print "\tBias:", red.capas[i].neuronas[j].bias
+			print "\tAlpha:", red.capas[i].neuronas[j].alpha
+			print "\tPesos:", red.capas[i].neuronas[j].pesos
+	print "="*60
+
 def pseudoaleatorio(inferior, superior):
 	while True:
 		numero = random.uniform(inferior, superior)
@@ -57,20 +68,22 @@ class CapaNeuronal(object):
 				self.neuronas[i].pesos[j] -= (self.neuronas[i].alpha * self.delthas[i] * entrada[j])
 
 	def calcular_delthas_salida(self, id_fncns, errores, entrada):
+		self.delthas = []
 		for i in range(len(errores)):
 			deltha = 0.0
 			if id_fncns[i] == 1:
 				deltha = errores[i]
-				self.delthas.append(errores[i])
 			else:
 				deltha = errores[i] * derivada_tangencial(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
 			self.delthas.append(deltha)
 
 	def calcular_delthas_ocultas(self, id_fncns, entrada, capa_sig):
+		self.delthas = []
 		for i in range(len(id_fncns)):
 			suma_delthas = 0.0
 			for j in range(len(capa_sig.delthas)):
 				suma_delthas += (capa_sig.delthas[j] * capa_sig.neuronas[j].pesos[i])
+			#print "SumaDeltha:", suma_delthas
 			deltha = 0.0
 			if id_fncns[i] == 1:
 				deltha = suma_delthas
@@ -78,9 +91,9 @@ class CapaNeuronal(object):
 				deltha = suma_delthas * derivada_tangencial(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
 			self.delthas.append(deltha)
 
-	def calcular_salidas(self, id_fncns):
+	def calcular_salidas(self, id_fncns, entrada):
 		for i in range(len(id_fncns)):
-			self.neuronas[i].calcular_salida(id_fncns[i], self.entrada)
+			self.neuronas[i].calcular_salida(id_fncns[i], entrada)
 
 
 class RedNeuronal(object):
@@ -89,16 +102,76 @@ class RedNeuronal(object):
 		super(RedNeuronal, self).__init__()
 		self.indice_funciones = indice_funciones
 		self.capas = []
+		for i in range(len(self.indice_funciones)):
+			if i == 0:
+				self.capas.append(CapaNeuronal(len(self.indice_funciones[i]), total_args))
+			else:
+				self.capas.append(CapaNeuronal(len(self.indice_funciones[i]), len(self.indice_funciones[i-1])))
+		if id_alphas == 1:
+			alpha = pseudoaleatorio(0.0, 1.0)
+			for i in range(len(self.capas)):
+				for j in range(len(self.capas[i].neuronas)):
+					self.capas[i].neuronas[j].alpha = alpha
+		elif id_alphas == 2:
+			for i in range(len(self.capas)):
+				alpha = pseudoaleatorio(0.0, 1.0)
+				for j in range(len(self.capas[i].neuronas)):
+					self.capas[i].neuronas[j].alpha = alpha
+		elif id_alphas == 3:
+			for i in range(len(self.capas)):
+				for j in range(len(self.capas[i].neuronas)):
+					self.capas[i].neuronas[j].alpha = pseudoaleatorio(0.0, 1.0)
 
-	def aplicar_red(self):
-		pass
+	def aplicar_red(self, entradas):
+		salidas = []
+		for i in range(len(entradas)):
+			self.propagacion(entradas[i])
+			salida = []
+			for j in range(len(self.capas[-1].neuronas)):
+				salida.append(self.capas[-1].neuronas[j].salida)
+			salidas.append(salida)
+		return salidas
 
 	def propagacion(self, entrada):
-		pass
+		for i in range(len(self.capas)):
+			if i == 0:
+				self.capas[i].calcular_salidas(self.indice_funciones[i], entrada)
+			else:
+				entrada2 = []
+				for j in range(len(self.capas[i-1].neuronas)):
+					entrada2.append(self.capas[i-1].neuronas[j].salida)
+				self.capas[i].calcular_salidas(self.indice_funciones[i], entrada2)
 
-	def retropropagacion(self):
-		pass
+	def retropropagacion(self, salida, entrada):
+		lista = range(len(self.capas))
+		for i in lista.__reversed__():
+			if i == len(self.capas) - 1:
+				errores = []
+				for j in range(len(self.capas[i].neuronas)):
+					errores.append(salida[j] - self.capas[i].neuronas[j].salida)
+				entrada2 = []
+				for j in range(len(self.capas[i-1].neuronas)):
+					entrada2.append(self.capas[i-1].neuronas[j].salida)
+				self.capas[i].calcular_delthas_salida(self.indice_funciones[i], errores, entrada2)
+			else:
+				capa_siguiente = self.capas[i+1]
+				if i == 0:
+					self.capas[i].calcular_delthas_ocultas(self.indice_funciones[i], entrada, capa_siguiente)
+				else:
+					entrada2 = []
+					for j in range(len(self.capas[i-1].neuronas)):
+						entrada2.append(self.capas[i-1].neuronas[j].salida)
+					self.capas[i].calcular_delthas_ocultas(self.indice_funciones[i], entrada2, capa_siguiente)
 
-	def ajustar_parametros(self):
-		pass
+	def ajustar_parametros(self, entrada):
+		for i in range(len(self.capas)):
+			#print "Delthas(%d):" % (i+1), self.capas[i].delthas
+			self.capas[i].ajustar_biases()
+			if i == 0:
+				self.capas[i].ajustar_pesos(entrada)
+			else:
+				entrada2 = []
+				for j in range(len(self.capas[i-1].neuronas)):
+					entrada2.append(self.capas[i-1].neuronas[j].salida)
+				self.capas[i].ajustar_pesos(entrada2)
 		
