@@ -1,17 +1,6 @@
 import math
 import random
 
-def imprime_red(red):
-	print "="*60
-	for i in range(len(red.capas)):
-		print "Capa " + str(i+1) + "-"*35
-		for j in range(len(red.capas[i].neuronas)):
-			print "Neurona " + str(j+1)
-			print "\tBias:", red.capas[i].neuronas[j].bias
-			print "\tAlpha:", red.capas[i].neuronas[j].alpha
-			print "\tPesos:", red.capas[i].neuronas[j].pesos
-	print "="*60
-
 def pseudoaleatorio(inferior, superior):
 	while True:
 		numero = random.uniform(inferior, superior)
@@ -25,11 +14,25 @@ def suma_ponderada(bias, entrada, pesos):
 	potencial += bias
 	return potencial
 
-def sigmoide_tangencial(potencial):
-	return ((2.0 / (1.0 + pow(math.e, (-1.0 * potencial)))) - 1.0)
+def activacion(id_funcion, potencial):
+	if id_funcion == 1:
+		return potencial
+	elif id_funcion == 2:
+		return (1.0 / (1.0 + (pow(math.e, (-1.0 * potencial)))))
+	elif id_funcion == 3:
+		return ((2.0 / (1.0 + pow(math.e, (-1.0 * potencial)))) - 1.0)
+	elif id_funcion == 4:
+		return ((pow(math.e, potencial) - (pow(math.e, (-1.0 * potencial)))) / (pow(math.e, potencial) + (pow(math.e, (-1.0 * potencial)))))
 
-def derivada_tangencial(potencial):
-	return ((2.0 * pow(math.e, (-1 * potencial))) / pow(1.0 + pow(math.e, (-1 * potencial)), 2.0))
+def derivada(id_funcion, potencial):
+	if id_funcion == 1:
+		return 1.0
+	elif id_funcion == 2:
+		return (activacion(2, potencial) * (1.0 - activacion(2, potencial)))
+	elif id_funcion == 3:
+		return ((2.0 * pow(math.e, (-1 * potencial))) / pow(1.0 + pow(math.e, (-1 * potencial)), 2.0))
+	elif id_funcion == 4:
+		return (1.0 - pow(activacion(4, potencial), 2.0))
 
 class Neurona(object):
 	"""docstring for Neurona"""
@@ -43,17 +46,17 @@ class Neurona(object):
 			self.pesos.append(pseudoaleatorio(-1.0, 1.0))
 
 	def calcular_salida(self, id_funcion, entrada):
-		if id_funcion == 1:
-			self.salida = suma_ponderada(self.bias, entrada, self.pesos)
-		elif id_funcion == 2:
-			self.salida = sigmoide_tangencial(suma_ponderada(self.bias, entrada, self.pesos))
+		self.salida = activacion(id_funcion, suma_ponderada(self.bias, entrada, self.pesos))
 
 
 class CapaNeuronal(object):
 	"""docstring for CapaNeuronal"""
-	def __init__(self, total_neurs, total_args):
+	def __init__(self, total_neurs, total_args, indice_funciones):
 		super(CapaNeuronal, self).__init__()
-		self.delthas = []
+		self.funciones = indice_funciones
+		self.delthas = [0.0] * total_neurs
+		self.salidas = [0.0] * total_neurs
+		self.entrada = []
 		self.neuronas = []
 		for i in range(total_neurs):
 			self.neuronas.append(Neurona(total_args))
@@ -62,51 +65,42 @@ class CapaNeuronal(object):
 		for i in range(len(self.neuronas)):
 			self.neuronas[i].bias += (self.neuronas[i].alpha * self.delthas[i])
 
-	def ajustar_pesos(self, entrada):
+	def ajustar_pesos(self):
 		for i in range(len(self.neuronas)):
 			for j in range(len(self.neuronas[i].pesos)):
-				self.neuronas[i].pesos[j] -= (self.neuronas[i].alpha * self.delthas[i] * entrada[j])
+				self.neuronas[i].pesos[j] += (self.neuronas[i].alpha * self.delthas[i] * self.entrada[j])
 
-	def calcular_delthas_salida(self, id_fncns, errores, entrada):
-		self.delthas = []
+	def calcular_delthas_salida(self, errores):
 		for i in range(len(errores)):
-			deltha = 0.0
-			if id_fncns[i] == 1:
-				deltha = errores[i]
-			else:
-				deltha = errores[i] * derivada_tangencial(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
-			self.delthas.append(deltha)
+			self.delthas[i] = errores[i] * derivada(self.funciones[i],
+													suma_ponderada(self.neuronas[i].bias,
+													self.entrada, self.neuronas[i].pesos))
 
-	def calcular_delthas_ocultas(self, id_fncns, entrada, capa_sig):
-		self.delthas = []
-		for i in range(len(id_fncns)):
+	def calcular_delthas_ocultas(self, capa_sig):
+		for i in range(len(self.funciones)):
 			suma_delthas = 0.0
 			for j in range(len(capa_sig.delthas)):
 				suma_delthas += (capa_sig.delthas[j] * capa_sig.neuronas[j].pesos[i])
-			#print "SumaDeltha:", suma_delthas
-			deltha = 0.0
-			if id_fncns[i] == 1:
-				deltha = suma_delthas
-			else:
-				deltha = suma_delthas * derivada_tangencial(suma_ponderada(self.neuronas[i].bias, entrada, self.neuronas[i].pesos))
-			self.delthas.append(deltha)
+			self.delthas[i] = suma_delthas * derivada(self.funciones[i], suma_ponderada(
+													self.neuronas[i].bias, self.entrada,
+													self.neuronas[i].pesos))
 
-	def calcular_salidas(self, id_fncns, entrada):
-		for i in range(len(id_fncns)):
-			self.neuronas[i].calcular_salida(id_fncns[i], entrada)
+	def calcular_salidas(self):
+		for i in range(len(self.funciones)):
+			self.neuronas[i].calcular_salida(self.funciones[i], self.entrada)
+			self.salidas[i] = self.neuronas[i].salida
 
 
 class RedNeuronal(object):
 	"""docstring for RedNeuronal"""
 	def __init__(self, id_alphas, total_args, indice_funciones):
 		super(RedNeuronal, self).__init__()
-		self.indice_funciones = indice_funciones
 		self.capas = []
-		for i in range(len(self.indice_funciones)):
+		for i in range(len(indice_funciones)):
 			if i == 0:
-				self.capas.append(CapaNeuronal(len(self.indice_funciones[i]), total_args))
+				self.capas.append(CapaNeuronal(len(indice_funciones[i]), total_args, indice_funciones[i]))
 			else:
-				self.capas.append(CapaNeuronal(len(self.indice_funciones[i]), len(self.indice_funciones[i-1])))
+				self.capas.append(CapaNeuronal(len(indice_funciones[i]), len(indice_funciones[i-1]), indice_funciones[i]))
 		if id_alphas == 1:
 			alpha = pseudoaleatorio(0.0, 1.0)
 			for i in range(len(self.capas)):
@@ -135,43 +129,37 @@ class RedNeuronal(object):
 	def propagacion(self, entrada):
 		for i in range(len(self.capas)):
 			if i == 0:
-				self.capas[i].calcular_salidas(self.indice_funciones[i], entrada)
+				self.capas[i].entrada = entrada
 			else:
-				entrada2 = []
-				for j in range(len(self.capas[i-1].neuronas)):
-					entrada2.append(self.capas[i-1].neuronas[j].salida)
-				self.capas[i].calcular_salidas(self.indice_funciones[i], entrada2)
+				entrada = self.capas[i-1].salidas
+				self.capas[i].entrada = entrada
+			self.capas[i].calcular_salidas()
 
-	def retropropagacion(self, salida, entrada):
+	def retropropagacion(self, salida):
 		lista = range(len(self.capas))
 		for i in lista.__reversed__():
 			if i == len(self.capas) - 1:
 				errores = []
-				for j in range(len(self.capas[i].neuronas)):
-					errores.append(salida[j] - self.capas[i].neuronas[j].salida)
-				entrada2 = []
-				for j in range(len(self.capas[i-1].neuronas)):
-					entrada2.append(self.capas[i-1].neuronas[j].salida)
-				self.capas[i].calcular_delthas_salida(self.indice_funciones[i], errores, entrada2)
+				for j in range(len(self.capas[i].salidas)):
+					errores.append((salida[j] - self.capas[i].salidas[j]))
+				self.capas[i].calcular_delthas_salida(errores)
 			else:
 				capa_siguiente = self.capas[i+1]
-				if i == 0:
-					self.capas[i].calcular_delthas_ocultas(self.indice_funciones[i], entrada, capa_siguiente)
-				else:
-					entrada2 = []
-					for j in range(len(self.capas[i-1].neuronas)):
-						entrada2.append(self.capas[i-1].neuronas[j].salida)
-					self.capas[i].calcular_delthas_ocultas(self.indice_funciones[i], entrada2, capa_siguiente)
+				self.capas[i].calcular_delthas_ocultas(capa_siguiente)
 
-	def ajustar_parametros(self, entrada):
+	def ajustar_parametros(self):
 		for i in range(len(self.capas)):
-			#print "Delthas(%d):" % (i+1), self.capas[i].delthas
 			self.capas[i].ajustar_biases()
-			if i == 0:
-				self.capas[i].ajustar_pesos(entrada)
-			else:
-				entrada2 = []
-				for j in range(len(self.capas[i-1].neuronas)):
-					entrada2.append(self.capas[i-1].neuronas[j].salida)
-				self.capas[i].ajustar_pesos(entrada2)
+			self.capas[i].ajustar_pesos()
+
+	def imprime_red(self):
+		print "="*60
+		for i in range(len(self.capas)):
+			print "Capa " + str(i+1) + "-"*35
+			for j in range(len(self.capas[i].neuronas)):
+				print "Neurona " + str(j+1)
+				print "\tBias:", self.capas[i].neuronas[j].bias
+				print "\tAlpha:", self.capas[i].neuronas[j].alpha
+				print "\tPesos:", self.capas[i].neuronas[j].pesos
+		print "="*60
 		

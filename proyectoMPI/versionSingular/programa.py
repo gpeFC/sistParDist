@@ -23,12 +23,12 @@ def algoritmo_retropropagacion(epocas, error, patrones, red):
 			red.propagacion(entradas[i])
 			error_local = 0.0
 			for j in range(len(salidas[i])):
-				error_local += ((salidas[i][j] - red.capas[-1].neuronas[j].salida)**2)
-			error_local /= float(len(red.capas[-1].neuronas))
+				error_local += ((salidas[i][j] - red.capas[-1].salidas[j])**2)
+			error_local /= float(len(red.capas[-1].salidas))
 			error_global += error_local
 			if error_local != 0.0:
-				red.retropropagacion(salidas[i], entradas[i])
-			red.ajustar_parametros(entradas[i])
+				red.retropropagacion(salidas[i])
+			red.ajustar_parametros()
 		error_global /= float(len(entradas))
 		iteracion += 1
 		if error_global <= error:
@@ -38,6 +38,27 @@ def algoritmo_retropropagacion(epocas, error, patrones, red):
 	print "Error minimo acordado:       ", error 
 	print "Error minimo alcanzado:      ", error_global
 	print "+"*30
+
+patron_and = [
+			[0.0, 0.0, [0.0]],
+			[0.0, 1.0, [0.0]],
+			[1.0, 0.0, [0.0]],
+			[1.0, 1.0, [1.0]]
+			]
+
+patron_or = [
+			[0.0, 0.0, [0.0]],
+			[0.0, 1.0, [1.0]],
+			[1.0, 0.0, [1.0]],
+			[1.0, 1.0, [1.0]]
+			]
+
+patron_xor = [
+			[0.0, 0.0, [0.0]],
+			[0.0, 1.0, [1.0]],
+			[1.0, 0.0, [1.0]],
+			[1.0, 1.0, [0.0]]
+			]
 
 patrones = [
 			[-2.0,[-1.0]],
@@ -55,11 +76,11 @@ ejemplos = [
 			[1.6],
 			]
 
-error = 0.0005
+error = 0.005
 
-epocas = 5
+epocas = 50000
 
-indices = [[2,2],[1]]
+indices = [[3,3],[2,2],[1]]
 
 
 print
@@ -68,10 +89,10 @@ print
 
 red = RedNeuronal(1, 1, indices)
 
-imprime_red(red)
+red.imprime_red()
 print
 
 algoritmo_retropropagacion(epocas, error, patrones, red)
 
-imprime_red(red)
+red.imprime_red()
 print
