@@ -37,7 +37,7 @@ prueba_tan = [
 			[1.6],
 			]
 
-error = 0.005
+error = 0.05
 
 epocas = 1000
 

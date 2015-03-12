@@ -97,7 +97,6 @@ def algoritmo_retropropagacion(epocas, error, patrones, red):
 	error_global = 0.0
 	indices = range(len(patrones))
 	while iteracion < epocas:
-		print "Epoca:", iteracion+1
 		error_global = 0.0
 		shuffle(indices)
 		for i in indices:
