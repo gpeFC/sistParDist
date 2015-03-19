@@ -108,7 +108,7 @@ def algoritmo_retropropagacion(epocas, error, patrones, red):
 			error_global += error_local
 			if error_local != 0.0:
 				red.retropropagacion(salidas[i])
-			red.ajustar_parametros()
+				red.ajustar_parametros()
 		error_global /= float(len(entradas))
 		iteracion += 1
 		if error_global <= error:

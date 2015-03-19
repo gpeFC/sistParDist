@@ -37,9 +37,9 @@ prueba_tan = [
 			[1.6],
 			]
 
-error = 0.05
+error = 0.005
 
-epocas = 1000
+epocas = 50000
 
 indices = [[2,2],[1]]
 
@@ -54,6 +54,7 @@ red.imprime_red()
 print
 
 algoritmo_retropropagacion(epocas, error, patrones_tan, red)
+print
 
 red.imprime_red()
 print
